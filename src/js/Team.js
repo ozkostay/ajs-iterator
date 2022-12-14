@@ -1,35 +1,35 @@
 export default class Team {
   constructor() {
     this.enemies = [];
+    this.iterator = this[Symbol.iterator]();
   }
 
   add(item) {
     this.enemies.push(item);
+    this.iterator = this[Symbol.iterator]();
   }
 
-  iterator() {
+  [Symbol.iterator]() {
+    const arr = [...this.enemies];
     let index = 0;
-    let lastIndex;
-    const enemies = [...this.enemies];
     return {
-      next() {
-        if (index > enemies.length - 1) {
+      next: () => {
+        if (index < arr.length) {
+          return {
+            value: arr[index++],
+            done: false    
+          }
+        } else {
           return {
             value: undefined,
-            done: true,
-          };
+            done: true
+          }
         }
-        lastIndex = index;
-        index += 1;
-        return {
-          value: enemies[lastIndex],
-          done: false,
-        };
-      },
-    };
+      }
+    }
   }
 
-  getOneEnemy(iter) {
-    console.log(iter.next().value);
+  getOneEnemy() {
+    return this.iterator.next().value;
   }
 }
